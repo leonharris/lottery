@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lottery number generator</title>
+	<link rel="stylesheet" href="assets/css/main.css">
+  </head>
+  <body>
+    <h1>Lottery number generator</h1>
+	<!--<p>Fed up of trying to come up with new numbers each week? Try this...</p>-->
+
+	<div class="ball-grid" id="lotto" data-draw-type="lotto"></div>
+	<div class="actions">
+		<button id="btn_spin_lotto" class="btn">Spin the balls</button>
+	</div>
+
+	<div class="sort-toggle toggle">
+		<label class="switch">
+		  <input id="sort-toggle-switch" name="sort-toggle-switch" type="checkbox">
+		  <span class="slider round"></span>
+		</label>
+		<span class="toggle--label">Sort balls</span>
+	</div>
+
+	<div class="draw-type-toggle toggle">
+		<span class="toggle--label">Lotto</span>
+		<label class="switch">
+		  <input id="draw-type-toggle-switch" name="draw-type-toggle-switch" type="checkbox">
+		  <span class="slider round"></span>
+		</label>
+		<span class="toggle--label">EuroMillions</span>
+	</div>
+
+    <div id="latest-draw-result"></div>
+
+	<script src="assets/js/main-min.js"></script>
+	<script type="module" src="assets/js/app-min.js"></script>
+
+  </body>
+</html>

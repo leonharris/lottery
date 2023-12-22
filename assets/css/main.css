@@ -1,0 +1,174 @@
+:root {
+	--font-size: 16px;
+	--color-lottery-blue: #3460f2;
+}
+body {
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+	text-align: center;
+	display: flex;
+	height: 100vh;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	font-size: var(--font-size);
+	line-height: 1.5;
+	background-color: #fffcf6;
+	margin: 0;
+}
+h1 {
+	margin-top: 0;
+	margin-bottom: 40px;
+}
+h1 + p {
+	margin-bottom: 50px;
+}
+.ball-grid {
+	display: flex;
+	gap: 20px;
+}
+.actions {
+	display: flex;
+	align-items: center;
+	margin-top: 40px;
+}
+.ball {
+	text-align: center;
+	width: 100px;
+	line-height: 100px;
+	height: 100px;
+	border-radius: 50%;
+	margin: auto;
+	transition: all 0.2s ease-in-out;
+	box-shadow: inset -25px -25px 40px rgba(0,0,0,.15);
+	position: relative;
+	overflow: hidden;
+}
+
+[data-draw-type="euromillions"] .ball:nth-of-type(6),
+[data-draw-type="euromillions"] .ball:nth-of-type(7) {
+ background-color: white !important;
+}
+[data-draw-type="euromillions"] .ball:nth-of-type(6){
+	margin-left: 35px;
+}
+.number {
+	font-size: 28px;
+	font-weight: bold;
+	border-bottom: 3px solid;
+	display: inline-block;
+	line-height: 1.2;
+}
+[data-range=range-1] {
+	background-color: white;
+}
+[data-range=range-2] {
+	background-color: #499bea;
+}
+[data-range=range-3] {
+	background-color: #ff0066;
+}
+[data-range=range-4] {
+	background-color: #66cc33;
+}
+[data-range=range-5] {
+	background-color: #ffcc00;
+}
+[data-range=range-6] {
+	background-color: #990099;
+	color: white;
+}
+.btn {
+	border: 0;
+	outline: 0;
+	box-shadow: 0;
+	padding: 1rem 2rem;
+	font-weight: bold;
+	border-radius: 25px;
+	background-color: navy;
+	color: white;
+	font-size: var(--font-size);
+	margin: 10px;
+	display: inline-block;
+	cursor: pointer;
+}
+.btn:hover {
+	background-color: var(--color-lottery-blue);
+}
+.btn.active {
+	background: #e5013b;
+	background: linear-gradient(45deg,#cc0034 15%,#e5013b 100%);
+}
+
+.toggle {
+	position: absolute;
+	bottom: 20px;
+	display: flex;
+	align-items: center;
+}
+
+.sort-toggle {
+	left: 20px;
+}
+
+.draw-type-toggle {
+	right: 20px;
+}
+
+.toggle--label {
+	margin-left: 8px;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 54px;
+  height: 30px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--color-lottery-blue);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--color-lottery-blue);
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
