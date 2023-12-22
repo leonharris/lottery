@@ -25,6 +25,7 @@ h1 + p {
 .ball-grid {
 	display: flex;
 	gap: 20px;
+	flex-wrap: wrap;
 }
 .actions {
 	display: flex;
