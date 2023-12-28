@@ -46,6 +46,7 @@ h1 + p {
 	box-shadow: inset -25px -25px 40px rgba(0,0,0,.15);
 	position: relative;
 	overflow: hidden;
+	pointer-events: none;
 }
 
 [data-draw-type="euromillions"] .ball:nth-of-type(6),
