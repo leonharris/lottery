@@ -89,7 +89,7 @@ h1 + p {
 	padding: 1rem 2rem;
 	font-weight: bold;
 	border-radius: 25px;
-	background-color: navy;
+	background-color: #000080;
 	color: white;
 	font-size: var(--font-size);
 	margin: 10px;
