@@ -18,7 +18,7 @@ body {
 	padding: 0 1rem;
 }
 h1 {
-	margin-top: -1rem;
+	margin-top: -2rem;
 	line-height: 1.1;
 	margin-bottom: 2rem;
 }
@@ -89,7 +89,7 @@ h1 + p {
 	padding: 1rem 2rem;
 	font-weight: bold;
 	border-radius: 25px;
-	background-color: #000080;
+	background-color: navy;
 	color: white;
 	font-size: var(--font-size);
 	margin: 10px;
