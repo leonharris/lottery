@@ -1,0 +1,35 @@
+name: Update EuroMillions Results
+
+on:
+  schedule:
+    # EuroMillions draws: Tuesday & Friday evenings UK time
+    # Run Wednesday & Saturday at 22:00 UTC to be sure results are published
+    - cron: '0 22 * * 3'
+    - cron: '0 22 * * 6'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Update EuroMillions data
+        run: python setup_scripts/scrape_euromillions.py --update
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/data/euromillions-results.json assets/data/frequency-data.json assets/js/frequency-data.js
+          git diff --staged --quiet || git commit -m "chore: update EuroMillions results [skip ci]"
+          git push

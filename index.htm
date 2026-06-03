@@ -17,6 +17,30 @@
 		<button id="btn_spin_lotto" class="btn">Spin the balls</button>
 	</div>
 
+	<div class="sync-row">
+		<button id="btn_sync" class="btn-sync">Sync results</button>
+		<span id="sync-label" class="sync-label"></span>
+	</div>
+
+	<div class="mode-selector-wrap">
+		<div class="mode-selector">
+			<button class="mode-btn active" data-mode="random">Random</button>
+			<button class="mode-btn" data-mode="topn">Top N</button>
+			<button class="mode-btn" data-mode="weighted">Weighted</button>
+		</div>
+		<button class="info-btn" id="info-btn" aria-label="Explain draw modes">i</button>
+		<div class="info-popover" id="info-popover" hidden>
+			<dl>
+				<dt>Random</dt>
+				<dd>Completely random numbers every spin.</dd>
+				<dt>Top N</dt>
+				<dd>The most frequently drawn numbers in history — same result every spin.</dd>
+				<dt>Weighted</dt>
+				<dd>Random, but biased toward numbers drawn more often.</dd>
+			</dl>
+		</div>
+	</div>
+
 	<div class="sort-toggle toggle">
 		<label class="switch">
 		  <input id="sort-toggle-switch" name="sort-toggle-switch" type="checkbox">
@@ -36,8 +60,8 @@
 
     <div id="latest-draw-result"></div>
 
-	<script src="assets/js/main-min.js"></script>
-	<script type="module" src="assets/js/app-min.js"></script>
+	<script src="assets/js/frequency-data.js"></script>
+	<script src="assets/js/main.js"></script>
 
   </body>
 </html>
