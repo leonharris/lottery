@@ -9,13 +9,14 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'full = re-scrape entire history, update = latest draws only'
+        description: 'full = re-scrape entire history, update = latest draws only, diagnose = dump page structure to logs'
         required: false
         default: 'update'
         type: choice
         options:
           - update
           - full
+          - diagnose
 
 jobs:
   update:
@@ -43,6 +44,32 @@ jobs:
       - name: Full re-scrape UK Lotto data (manual)
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'full'
         run: python setup_scripts/scrape_lotto.py
+
+      - name: Diagnose page structure (manual, temporary)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'diagnose'
+        run: |
+          python3 - <<'PYEOF'
+          import requests
+          H = {'User-Agent': 'Mozilla/5.0 (compatible; lottery-data-fetcher/1.0)'}
+
+          def show(url):
+              print(f"\n===== {url} =====")
+              try:
+                  r = requests.get(url, timeout=15, headers=H)
+                  print(f"status={r.status_code} len={len(r.text)}")
+                  import re
+                  links = sorted(set(re.findall(r'href="([^"]*lotto/results[^"]*)"', r.text)))
+                  print(f"result-link count={len(links)}")
+                  print("sample links:", links[:5], "...", links[-5:] if len(links) > 5 else "")
+                  print("--- tail 3000 chars ---")
+                  print(r.text[-3000:])
+              except Exception as e:
+                  print("ERROR", e)
+
+          show("https://www.lottery.co.uk/lotto/results/archive-2026")
+          show("https://www.lottery.co.uk/lotto/results")
+          show("https://www.lottery.co.uk/lotto")
+          PYEOF
 
       - name: Commit if changed
         run: |
