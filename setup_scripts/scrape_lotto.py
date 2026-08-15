@@ -41,10 +41,17 @@ def parse_date(row):
 
 
 def extract_via_divs(row):
-    """Site markup style seen on the EuroMillions pages: one div per ball."""
+    """Site markup style seen on the EuroMillions pages: one div per ball.
+
+    Draws from late July 2026 onwards carry a second "Round 2" number set
+    (lotto-ball-round-2 / lotto-bonus-ball-round-2); only Round 1 is the
+    primary draw this app models, so Round 2 divs are skipped.
+    """
     main_balls, bonus = [], None
     for div in row.find_all('div', class_='result'):
         classes = ' '.join(div.get('class', []))
+        if 'round-2' in classes:
+            continue
         try:
             num = int(div.get_text(strip=True))
         except ValueError:
@@ -112,12 +119,6 @@ def fetch_url(url, label):
 
 def fetch_year(year):
     return fetch_url(f"https://www.lottery.co.uk/lotto/results/archive-{year}", str(year))
-
-
-def fetch_latest():
-    # The current year's archive page can lag behind by weeks/months; the
-    # un-suffixed results page reflects the latest draws, so pull it too.
-    return fetch_url("https://www.lottery.co.uk/lotto/results", "latest")
 
 
 def load_existing():
@@ -204,7 +205,6 @@ def full_scrape():
     for year in range(2015, datetime.now().year + 1):
         all_draws.extend(fetch_year(year))
         time.sleep(1)
-    all_draws.extend(fetch_latest())
     result = save(all_draws)
     print(f"\nSaved {len(result)} draws → {OUTPUT_FILE}")
     generate_frequency_js()
@@ -220,7 +220,6 @@ def update_scrape():
     for year in years:
         new_draws.extend(fetch_year(year))
         time.sleep(1)
-    new_draws.extend(fetch_latest())
     combined = existing + [d for d in new_draws if d['draw_date'] > latest]
     result = save(combined)
     print(f"Added {len(result) - len(existing)} new draw(s). Total: {len(result)}")

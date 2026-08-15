@@ -9,14 +9,13 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'full = re-scrape entire history, update = latest draws only, diagnose = dump page structure to logs'
+        description: 'full = re-scrape entire history, update = latest draws only'
         required: false
         default: 'update'
         type: choice
         options:
           - update
           - full
-          - diagnose
 
 jobs:
   update:
@@ -44,35 +43,6 @@ jobs:
       - name: Full re-scrape UK Lotto data (manual)
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'full'
         run: python setup_scripts/scrape_lotto.py
-
-      - name: Diagnose page structure (manual, temporary)
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'diagnose'
-        run: |
-          python3 - <<'PYEOF'
-          import sys
-          sys.path.insert(0, 'setup_scripts')
-          import requests
-          from bs4 import BeautifulSoup
-          import scrape_lotto as sl
-
-          url = "https://www.lottery.co.uk/lotto/results/archive-2026"
-          r = requests.get(url, timeout=15, headers=sl.HEADERS)
-          soup = BeautifulSoup(r.content, 'html.parser')
-          rows = soup.find_all('tr')
-          hits = [row for row in rows if row.find('a', href=lambda h: h and '/lotto/results-' in h)]
-          print(f"total hits={len(hits)}")
-
-          for row in hits[:8]:
-              link = row.find('a', href=lambda h: h and '/lotto/results-' in h)
-              parsed = sl.parse_row(row)
-              print("\n---ROW---", link.get('href'), repr(link.get_text(strip=True)))
-              print("parse_row result:", parsed)
-              if parsed is None:
-                  print("parse_date:", sl.parse_date(row))
-                  print("extract_via_divs:", sl.extract_via_divs(row))
-                  print("extract_via_text_cell:", sl.extract_via_text_cell(row))
-                  print(str(row)[:1200])
-          PYEOF
 
       - name: Commit if changed
         run: |
