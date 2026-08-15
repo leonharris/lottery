@@ -50,25 +50,30 @@ jobs:
         run: |
           python3 - <<'PYEOF'
           import requests
+          from bs4 import BeautifulSoup
           H = {'User-Agent': 'Mozilla/5.0 (compatible; lottery-data-fetcher/1.0)'}
 
-          def show(url):
+          def inspect(url):
               print(f"\n===== {url} =====")
               try:
                   r = requests.get(url, timeout=15, headers=H)
-                  print(f"status={r.status_code} len={len(r.text)}")
-                  import re
-                  links = sorted(set(re.findall(r'href="([^"]*lotto/results[^"]*)"', r.text)))
-                  print(f"result-link count={len(links)}")
-                  print("sample links:", links[:5], "...", links[-5:] if len(links) > 5 else "")
-                  print("--- tail 3000 chars ---")
-                  print(r.text[-3000:])
+                  soup = BeautifulSoup(r.content, 'html.parser')
+                  rows = soup.find_all('tr')
+                  print(f"status={r.status_code} tr_count={len(rows)}")
+                  hits = [row for row in rows if row.find('a', href=lambda h: h and '/lotto/results-' in h)]
+                  print(f"tr rows containing a /lotto/results- link: {len(hits)}")
+                  for row in hits[-6:]:
+                      link = row.find('a', href=lambda h: h and '/lotto/results-' in h)
+                      print("---ROW---")
+                      print("href:", link.get('href'))
+                      print("anchor text:", repr(link.get_text(strip=True)))
+                      print("row classes:", row.get('class'))
+                      print(str(row)[:800])
               except Exception as e:
                   print("ERROR", e)
 
-          show("https://www.lottery.co.uk/lotto/results/archive-2026")
-          show("https://www.lottery.co.uk/lotto/results")
-          show("https://www.lottery.co.uk/lotto")
+          inspect("https://www.lottery.co.uk/lotto/results/archive-2026")
+          inspect("https://www.lottery.co.uk/lotto/results")
           PYEOF
 
       - name: Commit if changed
