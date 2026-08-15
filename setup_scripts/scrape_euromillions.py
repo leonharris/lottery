@@ -10,6 +10,7 @@ Usage:
 
 import json
 import os
+import random
 import re
 import sys
 import time
@@ -112,10 +113,24 @@ def save(draws):
 
 
 def compute_top_n(freq, n):
-    # Tie-break by ascending number so the result is always exactly n long,
-    # even when multiple numbers share the same frequency at the cutoff.
-    sorted_items = sorted(freq.items(), key=lambda x: (-x[1], x[0]))
-    return [num for num, count in sorted_items[:n]]
+    # Ties that fit entirely within the top n carry through together (no
+    # ambiguity there). Only a tie group straddling the final slot(s) needs
+    # a random pick to fill the remaining space.
+    groups = {}
+    for num, count in freq.items():
+        groups.setdefault(count, []).append(num)
+
+    result = []
+    for count in sorted(groups, reverse=True):
+        group = sorted(groups[count])
+        remaining = n - len(result)
+        if len(group) <= remaining:
+            result.extend(group)
+        else:
+            result.extend(random.sample(group, remaining))
+        if len(result) >= n:
+            break
+    return result
 
 
 def generate_frequency_js():

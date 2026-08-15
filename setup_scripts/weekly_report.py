@@ -50,8 +50,24 @@ def build_freq(draws_of_numbers, max_n):
 
 
 def top_n(freq, n):
-    ranked = sorted(freq.items(), key=lambda kv: (-kv[1], kv[0]))
-    return [num for num, _ in ranked[:n]]
+    # Ties that fit entirely within the top n carry through together (no
+    # ambiguity there). Only a tie group straddling the final slot(s) needs
+    # a random pick to fill the remaining space.
+    groups = {}
+    for num, count in freq.items():
+        groups.setdefault(count, []).append(num)
+
+    result = []
+    for count in sorted(groups, reverse=True):
+        group = sorted(groups[count])
+        remaining = n - len(result)
+        if len(group) <= remaining:
+            result.extend(group)
+        else:
+            result.extend(random.sample(group, remaining))
+        if len(result) >= n:
+            break
+    return result
 
 
 def weighted_sample(freq, n):
