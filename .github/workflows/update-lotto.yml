@@ -49,31 +49,29 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'diagnose'
         run: |
           python3 - <<'PYEOF'
+          import sys
+          sys.path.insert(0, 'setup_scripts')
           import requests
           from bs4 import BeautifulSoup
-          H = {'User-Agent': 'Mozilla/5.0 (compatible; lottery-data-fetcher/1.0)'}
+          import scrape_lotto as sl
 
-          def inspect(url):
-              print(f"\n===== {url} =====")
-              try:
-                  r = requests.get(url, timeout=15, headers=H)
-                  soup = BeautifulSoup(r.content, 'html.parser')
-                  rows = soup.find_all('tr')
-                  print(f"status={r.status_code} tr_count={len(rows)}")
-                  hits = [row for row in rows if row.find('a', href=lambda h: h and '/lotto/results-' in h)]
-                  print(f"tr rows containing a /lotto/results- link: {len(hits)}")
-                  for row in hits[-6:]:
-                      link = row.find('a', href=lambda h: h and '/lotto/results-' in h)
-                      print("---ROW---")
-                      print("href:", link.get('href'))
-                      print("anchor text:", repr(link.get_text(strip=True)))
-                      print("row classes:", row.get('class'))
-                      print(str(row)[:800])
-              except Exception as e:
-                  print("ERROR", e)
+          url = "https://www.lottery.co.uk/lotto/results/archive-2026"
+          r = requests.get(url, timeout=15, headers=sl.HEADERS)
+          soup = BeautifulSoup(r.content, 'html.parser')
+          rows = soup.find_all('tr')
+          hits = [row for row in rows if row.find('a', href=lambda h: h and '/lotto/results-' in h)]
+          print(f"total hits={len(hits)}")
 
-          inspect("https://www.lottery.co.uk/lotto/results/archive-2026")
-          inspect("https://www.lottery.co.uk/lotto/results")
+          for row in hits[:8]:
+              link = row.find('a', href=lambda h: h and '/lotto/results-' in h)
+              parsed = sl.parse_row(row)
+              print("\n---ROW---", link.get('href'), repr(link.get_text(strip=True)))
+              print("parse_row result:", parsed)
+              if parsed is None:
+                  print("parse_date:", sl.parse_date(row))
+                  print("extract_via_divs:", sl.extract_via_divs(row))
+                  print("extract_via_text_cell:", sl.extract_via_text_cell(row))
+                  print(str(row)[:1200])
           PYEOF
 
       - name: Commit if changed
