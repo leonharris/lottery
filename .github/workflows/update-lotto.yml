@@ -1,0 +1,53 @@
+name: Update UK Lotto Results
+
+on:
+  schedule:
+    # UK Lotto draws: Wednesday & Saturday evenings UK time
+    # Run same day at 22:15 UTC (after the ~20:00 draw), offset from the
+    # EuroMillions job's 22:00 slot so the two don't race on frequency-data.json
+    - cron: '15 22 * * 3,6'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'full = re-scrape entire history, update = latest draws only'
+        required: false
+        default: 'update'
+        type: choice
+        options:
+          - update
+          - full
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Update UK Lotto data (scheduled)
+        if: github.event_name == 'schedule'
+        run: python setup_scripts/scrape_lotto.py --update
+
+      - name: Update UK Lotto data (manual update)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'update'
+        run: python setup_scripts/scrape_lotto.py --update
+
+      - name: Full re-scrape UK Lotto data (manual)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'full'
+        run: python setup_scripts/scrape_lotto.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/data/lotto-results.json assets/data/frequency-data.json assets/js/frequency-data.js
+          git diff --staged --quiet || git commit -m "chore: update UK Lotto results [skip ci]"
+          git push
