@@ -96,9 +96,8 @@ def parse_row(row):
         return None
 
 
-def fetch_year(year):
-    url = f"https://www.lottery.co.uk/lotto/results/archive-{year}"
-    print(f"  {year}...", end=" ", flush=True)
+def fetch_url(url, label):
+    print(f"  {label}...", end=" ", flush=True)
     try:
         r = requests.get(url, timeout=15, headers=HEADERS)
         r.raise_for_status()
@@ -109,6 +108,16 @@ def fetch_year(year):
     except Exception as e:
         print(f"✗ {e}")
         return []
+
+
+def fetch_year(year):
+    return fetch_url(f"https://www.lottery.co.uk/lotto/results/archive-{year}", str(year))
+
+
+def fetch_latest():
+    # The current year's archive page can lag behind by weeks/months; the
+    # un-suffixed results page reflects the latest draws, so pull it too.
+    return fetch_url("https://www.lottery.co.uk/lotto/results", "latest")
 
 
 def load_existing():
@@ -195,6 +204,7 @@ def full_scrape():
     for year in range(2015, datetime.now().year + 1):
         all_draws.extend(fetch_year(year))
         time.sleep(1)
+    all_draws.extend(fetch_latest())
     result = save(all_draws)
     print(f"\nSaved {len(result)} draws → {OUTPUT_FILE}")
     generate_frequency_js()
@@ -210,6 +220,7 @@ def update_scrape():
     for year in years:
         new_draws.extend(fetch_year(year))
         time.sleep(1)
+    new_draws.extend(fetch_latest())
     combined = existing + [d for d in new_draws if d['draw_date'] > latest]
     result = save(combined)
     print(f"Added {len(result) - len(existing)} new draw(s). Total: {len(result)}")
