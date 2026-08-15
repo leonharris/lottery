@@ -152,9 +152,10 @@ def save(draws):
 
 
 def compute_top_n(freq, n):
-    sorted_items = sorted(freq.items(), key=lambda x: -x[1])
-    cutoff = sorted_items[n - 1][1] if len(sorted_items) >= n else 0
-    return [num for num, count in sorted_items if count >= cutoff]
+    # Tie-break by ascending number so the result is always exactly n long,
+    # even when multiple numbers share the same frequency at the cutoff.
+    sorted_items = sorted(freq.items(), key=lambda x: (-x[1], x[0]))
+    return [num for num, count in sorted_items[:n]]
 
 
 def generate_frequency_js():
