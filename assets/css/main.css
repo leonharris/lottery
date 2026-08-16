@@ -36,6 +36,7 @@ h1 + p {
 	justify-content: center;
 	gap: 1rem;
 	flex-wrap: wrap;
+	width: 100%;
 }
 .ball-row--stars .ball {
 	width: 85px;
@@ -44,6 +45,24 @@ h1 + p {
 }
 .ball-row--stars .number {
 	font-size: 24px;
+}
+@media only screen and (max-width: 600px) {
+	.ball-row--numbers .ball {
+		width: clamp(48px, 15vw, 100px);
+		height: clamp(48px, 15vw, 100px);
+		line-height: clamp(48px, 15vw, 100px);
+	}
+	.ball-row--numbers .number {
+		font-size: clamp(16px, 5vw, 28px);
+	}
+	.ball-row--stars .ball {
+		width: calc(clamp(48px, 15vw, 100px) * 0.85);
+		height: calc(clamp(48px, 15vw, 100px) * 0.85);
+		line-height: calc(clamp(48px, 15vw, 100px) * 0.85);
+	}
+	.ball-row--stars .number {
+		font-size: calc(clamp(16px, 5vw, 28px) * 0.85);
+	}
 }
 .actions {
 	display: flex;
@@ -186,7 +205,7 @@ input:checked + .slider:before {
 
 
 .ball--star {
-	background-color: #ffd700 !important;
+	background-color: white !important;
 	color: #333 !important;
 }
 
