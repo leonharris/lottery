@@ -19,6 +19,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
+from prize_table import fetch_prize_table, EM_TIER_MAP, EM_TICKET_PRICE
+
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), '../assets/data/euromillions-results.json')
 LOTTO_FILE = os.path.join(os.path.dirname(__file__), '../assets/data/lotto-results.json')
 FREQ_JSON_FILE = os.path.join(os.path.dirname(__file__), '../assets/data/frequency-data.json')
@@ -72,6 +74,7 @@ def parse_row(row):
             "day": draw_date.strftime('%a'),
             "b": sorted(main_balls),
             "s": sorted(lucky_stars),
+            "_detail_url": date_link.get('href'),
         }
     except Exception:
         return None
@@ -105,6 +108,7 @@ def save(draws):
     for d in sorted(draws, key=lambda x: x['date']):
         if d['date'] not in seen:
             seen.add(d['date'])
+            d.pop('_detail_url', None)
             unique.append(d)
     os.makedirs(os.path.dirname(os.path.abspath(OUTPUT_FILE)), exist_ok=True)
     with open(OUTPUT_FILE, 'w') as f:
@@ -198,7 +202,19 @@ def update_scrape():
     for year in years:
         new_draws.extend(fetch_year(year))
         time.sleep(1)
-    combined = existing + [d for d in new_draws if d['date'] > latest]
+    genuinely_new = [d for d in new_draws if d['date'] > latest]
+
+    for d in genuinely_new:
+        if not d.get('_detail_url'):
+            continue
+        print(f"  Fetching prize breakdown for {d['date']}...", end=" ", flush=True)
+        try:
+            d['prizes'] = fetch_prize_table(d['_detail_url'], EM_TIER_MAP, EM_TICKET_PRICE)
+            print(f"✓ {len(d['prizes'])} tiers")
+        except Exception as e:
+            print(f"✗ {e}")
+
+    combined = existing + genuinely_new
     result = save(combined)
     print(f"Added {len(result) - len(existing)} new draw(s). Total: {len(result)}")
     generate_frequency_js()

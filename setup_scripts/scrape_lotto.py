@@ -19,6 +19,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
+from prize_table import fetch_prize_table, LOTTO_TIER_MAP, LOTTO_TICKET_PRICE
+
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), '../assets/data/lotto-results.json')
 EM_FILE = os.path.join(os.path.dirname(__file__), '../assets/data/euromillions-results.json')
 FREQ_JSON_FILE = os.path.join(os.path.dirname(__file__), '../assets/data/frequency-data.json')
@@ -27,18 +29,18 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (compatible; lottery-data-fetcher/1.0)'}
 FORMAT_START = datetime(2015, 10, 10)  # 59-ball format introduced this date
 
 
-def parse_date(row):
+def parse_date_link(row):
     date_link = row.find('a', href=lambda h: h and '/lotto/results-' in h)
     if not date_link:
-        return None
+        return None, None
     date_text = date_link.get_text(strip=True)
     clean_date = re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_text)
     for fmt in ('%A %d %B %Y', '%A %d %b %Y'):
         try:
-            return datetime.strptime(clean_date, fmt)
+            return datetime.strptime(clean_date, fmt), date_link.get('href')
         except ValueError:
             continue
-    return None
+    return None, None
 
 
 def extract_via_divs(row):
@@ -78,7 +80,7 @@ def extract_via_text_cell(row):
 
 def parse_row(row):
     try:
-        draw_date = parse_date(row)
+        draw_date, detail_href = parse_date_link(row)
         if draw_date is None or draw_date < FORMAT_START:
             return None
 
@@ -99,6 +101,7 @@ def parse_row(row):
             "draw_day": draw_date.strftime('%a'),
             "draw_result": ','.join(str(n) for n in main_balls),
             "bonus_ball": bonus,
+            "_detail_url": detail_href,
         }
     except Exception:
         return None
@@ -144,6 +147,7 @@ def save(draws):
     for d in sorted(draws, key=lambda x: x['draw_date']):
         if d['draw_date'] not in seen:
             seen.add(d['draw_date'])
+            d.pop('_detail_url', None)
             unique.append(d)
     unique = renumber(unique)
     os.makedirs(os.path.dirname(os.path.abspath(OUTPUT_FILE)), exist_ok=True)
@@ -236,7 +240,19 @@ def update_scrape():
     for year in years:
         new_draws.extend(fetch_year(year))
         time.sleep(1)
-    combined = existing + [d for d in new_draws if d['draw_date'] > latest]
+    genuinely_new = [d for d in new_draws if d['draw_date'] > latest]
+
+    for d in genuinely_new:
+        if not d.get('_detail_url'):
+            continue
+        print(f"  Fetching prize breakdown for {d['draw_date']}...", end=" ", flush=True)
+        try:
+            d['prizes'] = fetch_prize_table(d['_detail_url'], LOTTO_TIER_MAP, LOTTO_TICKET_PRICE)
+            print(f"✓ {len(d['prizes'])} tiers")
+        except Exception as e:
+            print(f"✗ {e}")
+
+    combined = existing + genuinely_new
     result = save(combined)
     print(f"Added {len(result) - len(existing)} new draw(s). Total: {len(result)}")
     generate_frequency_js()
