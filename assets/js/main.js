@@ -139,7 +139,18 @@ btn_sync.addEventListener('click', () => syncData(true));
 // --- ball rendering ---
 
 function reset_balls() {
-    document.querySelectorAll('.ball').forEach(el => el.remove());
+    lotto_grid.innerHTML = '';
+}
+
+function getBallRow(isStar) {
+    const rowClass = isStar ? 'ball-row--stars' : 'ball-row--numbers';
+    let row = lotto_grid.querySelector('.' + rowClass);
+    if (!row) {
+        row = document.createElement('div');
+        row.setAttribute('class', 'ball-row ' + rowClass);
+        lotto_grid.append(row);
+    }
+    return row;
 }
 
 function renderBall(number, isStar) {
@@ -154,7 +165,7 @@ function renderBall(number, isStar) {
     span.setAttribute('class', 'number');
     span.textContent = number;
     ball.append(span);
-    lotto_grid.append(ball);
+    getBallRow(isStar).append(ball);
 }
 
 function generateNumbers(max, quantity, key, isStar) {
