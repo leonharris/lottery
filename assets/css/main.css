@@ -36,6 +36,15 @@ h1 + p {
 	justify-content: center;
 	gap: 1rem;
 	flex-wrap: wrap;
+	width: 100%;
+}
+.ball-row--stars .ball {
+	width: 85px;
+	height: 85px;
+	line-height: 85px;
+}
+.ball-row--stars .number {
+	font-size: 24px;
 }
 .ball-row--stars .ball {
 	width: 85px;
@@ -56,7 +65,7 @@ h1 + p {
 	line-height: 100px;
 	height: 100px;
 	border-radius: 50%;
-	margin: auto;
+	flex-shrink: 0;
 	transition: all 0.2s ease-in-out;
 	box-shadow: inset -25px -25px 40px rgba(0,0,0,.15);
 	position: relative;
@@ -186,7 +195,7 @@ input:checked + .slider:before {
 
 
 .ball--star {
-	background-color: #ffd700 !important;
+	background-color: white !important;
 	color: #333 !important;
 }
 
