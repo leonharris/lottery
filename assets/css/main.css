@@ -46,24 +46,6 @@ h1 + p {
 .ball-row--stars .number {
 	font-size: 24px;
 }
-@media only screen and (max-width: 600px) {
-	.ball-row--numbers .ball {
-		width: clamp(48px, 15vw, 100px);
-		height: clamp(48px, 15vw, 100px);
-		line-height: clamp(48px, 15vw, 100px);
-	}
-	.ball-row--numbers .number {
-		font-size: clamp(16px, 5vw, 28px);
-	}
-	.ball-row--stars .ball {
-		width: calc(clamp(48px, 15vw, 100px) * 0.85);
-		height: calc(clamp(48px, 15vw, 100px) * 0.85);
-		line-height: calc(clamp(48px, 15vw, 100px) * 0.85);
-	}
-	.ball-row--stars .number {
-		font-size: calc(clamp(16px, 5vw, 28px) * 0.85);
-	}
-}
 .actions {
 	display: flex;
 	align-items: center;
@@ -75,7 +57,7 @@ h1 + p {
 	line-height: 100px;
 	height: 100px;
 	border-radius: 50%;
-	margin: auto;
+	flex-shrink: 0;
 	transition: all 0.2s ease-in-out;
 	box-shadow: inset -25px -25px 40px rgba(0,0,0,.15);
 	position: relative;
