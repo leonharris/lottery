@@ -1,28 +1,28 @@
 {
   "euromillions": {
-    "last_reported_draw_date": "2026-08-21",
+    "last_reported_draw_date": "2026-08-25",
     "modes": {
       "random": {
         "2026": {
-          "cost": 50.0,
-          "draws": 2,
-          "lines": 20,
-          "winnings": 23.9
+          "cost": 75.0,
+          "draws": 3,
+          "lines": 30,
+          "winnings": 27.0
         }
       },
       "topn": {
         "2026": {
-          "cost": 5.0,
-          "draws": 2,
-          "lines": 2,
+          "cost": 7.5,
+          "draws": 3,
+          "lines": 3,
           "winnings": 0.0
         }
       },
       "weighted": {
         "2026": {
-          "cost": 50.0,
-          "draws": 2,
-          "lines": 20,
+          "cost": 75.0,
+          "draws": 3,
+          "lines": 30,
           "winnings": 8.1
         }
       }
