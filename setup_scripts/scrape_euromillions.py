@@ -80,19 +80,24 @@ def parse_row(row):
         return None
 
 
-def fetch_year(year):
+def fetch_year(year, retries=3):
     url = f"https://www.lottery.co.uk/euromillions/results/archive-{year}"
     print(f"  {year}...", end=" ", flush=True)
-    try:
-        r = requests.get(url, timeout=15, headers=HEADERS)
-        r.raise_for_status()
-        soup = BeautifulSoup(r.content, 'html.parser')
-        draws = [d for row in soup.find_all('tr') if (d := parse_row(row))]
-        print(f"✓ {len(draws)}")
-        return draws
-    except Exception as e:
-        print(f"✗ {e}")
-        return []
+    for attempt in range(1, retries + 1):
+        try:
+            r = requests.get(url, timeout=15, headers=HEADERS)
+            r.raise_for_status()
+            soup = BeautifulSoup(r.content, 'html.parser')
+            draws = [d for row in soup.find_all('tr') if (d := parse_row(row))]
+            print(f"✓ {len(draws)}")
+            return draws
+        except Exception as e:
+            if attempt < retries:
+                print(f"✗ {e} (retry {attempt}/{retries - 1})", end=" ", flush=True)
+                time.sleep(5)
+            else:
+                print(f"✗ {e}")
+    return []
 
 
 def load_existing():
