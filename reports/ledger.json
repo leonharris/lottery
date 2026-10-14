@@ -1,57 +1,57 @@
 {
   "euromillions": {
-    "last_reported_draw_date": "2026-10-09",
+    "last_reported_draw_date": "2026-10-13",
     "modes": {
       "random": {
         "2026": {
-          "cost": 400.0,
-          "draws": 16,
-          "lines": 160,
+          "cost": 425.0,
+          "draws": 17,
+          "lines": 170,
           "winnings": 47.2
         }
       },
       "topn": {
         "2026": {
-          "cost": 40.0,
-          "draws": 16,
-          "lines": 16,
-          "winnings": 4.1
+          "cost": 42.5,
+          "draws": 17,
+          "lines": 17,
+          "winnings": 6.8999999999999995
         }
       },
       "weighted": {
         "2026": {
-          "cost": 400.0,
-          "draws": 16,
-          "lines": 160,
+          "cost": 425.0,
+          "draws": 17,
+          "lines": 170,
           "winnings": 40.7
         }
       }
     }
   },
   "lotto": {
-    "last_reported_draw_date": "2026-10-07",
+    "last_reported_draw_date": "2026-10-10",
     "modes": {
       "random": {
         "2026": {
-          "cost": 300.0,
-          "draws": 15,
-          "lines": 150,
+          "cost": 320.0,
+          "draws": 16,
+          "lines": 160,
           "winnings": 66.0
         }
       },
       "topn": {
         "2026": {
-          "cost": 30.0,
-          "draws": 15,
-          "lines": 15,
+          "cost": 32.0,
+          "draws": 16,
+          "lines": 16,
           "winnings": 13.0
         }
       },
       "weighted": {
         "2026": {
-          "cost": 300.0,
-          "draws": 15,
-          "lines": 150,
+          "cost": 320.0,
+          "draws": 16,
+          "lines": 160,
           "winnings": 39.0
         }
       }
