@@ -29,30 +29,30 @@
     }
   },
   "lotto": {
-    "last_reported_draw_date": "2026-10-21",
+    "last_reported_draw_date": "2026-10-28",
     "modes": {
       "random": {
         "2026": {
-          "cost": 380.0,
-          "draws": 19,
-          "lines": 190,
-          "winnings": 70.0
+          "cost": 420.0,
+          "draws": 21,
+          "lines": 210,
+          "winnings": 73.0
         }
       },
       "topn": {
         "2026": {
-          "cost": 38.0,
-          "draws": 19,
-          "lines": 19,
+          "cost": 42.0,
+          "draws": 21,
+          "lines": 21,
           "winnings": 13.0
         }
       },
       "weighted": {
         "2026": {
-          "cost": 380.0,
-          "draws": 19,
-          "lines": 190,
-          "winnings": 44.0
+          "cost": 420.0,
+          "draws": 21,
+          "lines": 210,
+          "winnings": 47.0
         }
       }
     }
